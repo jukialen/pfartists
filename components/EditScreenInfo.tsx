@@ -1,5 +1,5 @@
 import * as WebBrowser from 'expo-web-browser';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 
 import Colors from '../constants/Colors';
 import { MonoText } from './StyledText';
@@ -9,6 +9,7 @@ export default function EditScreenInfo({ path }: { path: string }) {
   return (
     <View>
       <View style={styles.getStartedContainer}>
+      {/* <Image source={require('../assets/images/splash.png')} style={{width: 200, height: 200}} /> */}
         <Text
           style={styles.getStartedText}
           lightColor="rgba(0,0,0,0.8)"
