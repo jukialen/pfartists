@@ -5,21 +5,27 @@
  */
 import { FontAwesome } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { ColorSchemeName, Pressable } from 'react-native';
-
+// import { useNavigation } from '@react-navigation/core'
+// 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import Menu from '../screens/Home';
-import AddFiles from '../screens/AddFiles';
+import { AddFiles } from '../screens/AddFIles';
 import TabOneScreen from '../screens/TabOneScreen';
 import TabTwoScreen from '../screens/TabTwoScreen';
-import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types';
+import { RootStackParamList, RootTabParamList, RootTabScreenProps } from '../types/types';
 import LinkingConfiguration from './LinkingConfiguration';
+import { auth } from '../firebase';
+import { onAuthStateChanged, User } from 'firebase/auth';
+
+import { Login } from '../screens/Login';
+import { Create } from '../screens/Create';
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
   return (
@@ -38,15 +44,35 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
+  const [user, setUser] = useState<User | null>(null);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => !!user && setUser(user))
+  }, [user]);
+
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
-      <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
-        <Stack.Screen name="Modal" component={ModalScreen} />
-      </Stack.Group>
+      {
+        !!user ? (
+        <>
+          <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
+          <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
+          <Stack.Group screenOptions={{ presentation: 'modal' }}>
+            <Stack.Screen name="Modal" component={ModalScreen} />
+          </Stack.Group>
+        </>
+        ) : (
+          <>
+            <Stack.Screen name="Login" component={Login} options={{ headerShown: false, animation: 'fade_from_bottom' }} />
+          <Stack.Screen name="Create" component={Create} options={{ headerShown: false, animation: 'fade_from_bottom' }} />
+          </>
+          
+        )
+      }
+      
     </Stack.Navigator>
-  );
+  )
 }
 
 /**
@@ -96,7 +122,7 @@ function BottomTabNavigator() {
       />
       <BottomTab.Screen
         name="AddFiles"
-        component={TabOneScreen}
+        component={AddFiles}
         options={{
           title: 'Add files',
           tabBarIcon: ({ color }) => <TabBarIcon name="plus-square-o" color={color} />,
@@ -123,3 +149,5 @@ function TabBarIcon(props: {
 }) {
   return <FontAwesome size={30} style={{ marginBottom: -3 }} {...props} />;
 }
+
+

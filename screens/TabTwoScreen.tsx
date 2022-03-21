@@ -1,4 +1,4 @@
-import { global__styles, dark__mode } from '../styles/global';
+import { global__styles, dark__mode } from '../types/global';
 
 import EditScreenInfo from '../components/EditScreenInfo';
 import { Text, View } from '../components/Themed';
