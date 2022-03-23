@@ -35,13 +35,14 @@ export const Create = () => {
     // setIsLoading(true);
     createUserWithEmailAndPassword(auth, email!, password!)
     .then((userCredential) => {
+      console.log('Registered with:', userCredential.user.email);
       resetForm(initialValues);
       sendEmailVerification(auth.currentUser!, actionCodeSettings);
       setValuesFields('data?.NavForm?.successInfoRegistration');
     })
     .catch((e) => {
-      e.code === 'auth/email-already-in-use' ? setValuesFields('data?.NavForm?.theSameEmail') :
-      setValuesFields('data?.error');
+      e.code === 'auth/email-already-in-use' ? setValuesFields('data?.NavForm?.theSameEmail') : setValuesFields('data?.error');
+      
     });
     // setIsLoading(false);
   }, ['data?.NavForm?.theSameEmail', 'data?.NavForm?.successInfoRegistration']);

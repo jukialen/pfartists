@@ -201,7 +201,7 @@ export const AddFiles = () => {
 
           { errors.tags && <Text style={styles.error}>{errors.tags}</Text> }
 
-           <Button title="Pick an image from camera roll" onPress={pickImage} />
+           <Button title="Add a file" onPress={pickImage} />
       
 
          <TouchableOpacity

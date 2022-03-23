@@ -9,7 +9,6 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import { FormType, UserDataType } from 'types/global.types';
 import { useNavigation } from '@react-navigation/native';
-import { TabOneScreen } from './Home';
 
 export const Login = () => {
   const [valuesFields, setValuesFields] = useState<string>('');
@@ -31,6 +30,7 @@ export const Login = () => {
     .then(async (userCredential) => {
       const user = userCredential.user;
       if (user.emailVerified) {
+        console.log('Logged in with:', user.email);
         resetForm(initialValues);
         setValuesFields("data?.NavForm?.statusLogin");
       
