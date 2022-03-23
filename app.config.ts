@@ -22,12 +22,14 @@ export default {
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "icon": "./assets/images/PfA.png"
     },
     "android": {
+      "icon": "./assets/images/PfA.png",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/PfA.png",
+        "backgroundColor": "#ffd068"
       },
       "package": "com.nextexpo12.pfartists"
     },
