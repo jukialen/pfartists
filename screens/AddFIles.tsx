@@ -6,21 +6,22 @@ import { auth, storage } from '../firebase';
 import { getDownloadURL, ref, uploadBytesResumable, UploadTask } from 'firebase/storage';
 import { UploadTaskSnapshot } from '@firebase/storage';
 import { addDoc, CollectionReference } from 'firebase/firestore';
-
+import * as Localization from 'expo-localization';
+import i18n from 'i18n-js';
+import { pl } from '../languages/pl';
+import { en } from '../languages/en';
+import { ja } from '../languages/jp';
 import { Field, Form, Formik, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { SchemaValidation } from '../shemasValidation/schemaValidation';
 
 import { animationsCollectionRef, photosCollectionRef, videosCollectionRef } from 'references/referencesFirebase';
 
-import { EventType, FormType } from 'types/global.types';
+import { FormType } from 'types/global.types';
 
-// import { useHookSWR } from '../hooks/useHookSWR';
 
 // import { FormError } from '../../../../../components/molecules/FormError/FormError';
 // import { Alerts } from 'components/atoms/Alerts/Alerts';
-
-// import styles from './FileUpload.module.scss';
 // import { Progress } from '@chakra-ui/react';
 
 type FileDataType = {
@@ -38,27 +39,27 @@ export const AddFiles = () => {
   // const data = useHookSWR();
   const [tag, setTags] = useState<string>('');
 
+  i18n.fallbacks = true;
+  i18n.translations = { en, ja , pl };
+  i18n.locale = Localization.locale;
+
   const user = auth.currentUser;
   
   const tagsArray = [
-    { tag: `Choose tag`, value: '' },
-    { tag: `Realistic`, value: 'Realistic' },
-    { tag: `Manga`, value: 'Manga' },
-    { tag: `Anime`, value: 'Anime' },
-    { tag: `Comics`, value: 'Comics' },
-    { tag: `Photographs`, value: 'Photographs' },
-    { tag: `Videos`, value: 'Videos' },
-    { tag: `Animations`, value: 'Animations' },
-    { tag: `Others`, value: 'Others' }
+    { tag: i18n.t('chooseTag'), value: '' },
+    { tag: i18n.t('Aside.realistic'), value: 'Realistic' },
+    { tag: i18n.t('Aside.manga'), value: 'Manga' },
+    { tag: i18n.t('Aside.anime'), value: 'Anime' },
+    { tag: i18n.t('Aside.comics'), value: 'Comics' },
+    { tag: i18n.t('Aside.photographs'), value: 'Photographs' },
+    { tag: i18n.t('Aside.videos'), value: 'Videos' },
+    { tag: i18n.t('Aside.animations'), value: 'Animations' },
+    { tag: i18n.t('Aside.others'), value: 'Others' }
   ];
   
   const schemaFile = Yup.object({
     tags: SchemaValidation().tags,
   });
-  
-  // const handleChange = async (e: EventType) => {
-  //   e.target.files?.[0] && setFile(e.target.files[0]);
-  // };
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library

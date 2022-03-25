@@ -1,17 +1,27 @@
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useCallback, useState } from 'react'
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useState } from 'react';
+import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
+import * as Localization from 'expo-localization';
+import i18n from 'i18n-js';
+import { pl } from '../languages/pl';
+import { en } from '../languages/en';
+import { ja } from '../languages/jp';
 import { Formik } from 'formik'
 import * as Yup from 'yup';
 import { SchemaValidation } from '../shemasValidation/schemaValidation';
 
-import { globalColors } from '../styles/variables';
-import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase';
 import { FormType, UserDataType } from 'types/global.types';
-import { useNavigation } from '@react-navigation/native';
+
+import { globalColors } from '../styles/variables';
 
 export const Create = () => {
   const [valuesFields, setValuesFields] = useState<string>('');
+
+  i18n.fallbacks = true;
+  i18n.translations = { en, ja , pl };
+  i18n.locale = Localization.locale;
 
   const initialValues = {
     email: '',
@@ -38,14 +48,14 @@ export const Create = () => {
       console.log('Registered with:', userCredential.user.email);
       resetForm(initialValues);
       sendEmailVerification(auth.currentUser!, actionCodeSettings);
-      setValuesFields('data?.NavForm?.successInfoRegistration');
+      setValuesFields(i18n.t('NavForm.successInfoRegistration'));
     })
     .catch((e) => {
-      e.code === 'auth/email-already-in-use' ? setValuesFields('data?.NavForm?.theSameEmail') : setValuesFields('data?.error');
+      e.code === 'auth/email-already-in-use' ? setValuesFields(i18n.t('NavForm.theSameEmail')) : setValuesFields(i18n.t('error'));
       
     });
     // setIsLoading(false);
-  }, ['data?.NavForm?.theSameEmail', 'data?.NavForm?.successInfoRegistration']);
+  }, [i18n.t('NavForm.theSameEmail'), i18n.t('error')]);
 
   return (
     <Formik
@@ -56,14 +66,14 @@ export const Create = () => {
   {({ handleChange, handleBlur, handleSubmit, values, setFieldValue, errors, touched }) => (
       <KeyboardAvoidingView style={styles.container}>
           <Text style={styles.title}>
-            Register
+            {i18n.t('NavForm.titleOfRegistration')}
           </Text>  
 
         <TextInput
           onChangeText={handleChange('email')}
           onBlur={handleBlur('email')}
           value={values.email}
-          placeholder='email'
+          placeholder={i18n.t('NavForm.email')}
           placeholderTextColor={globalColors.$dark__color__light__back}
           style={styles.input}
         />    
@@ -82,7 +92,7 @@ export const Create = () => {
         onBlur={handleBlur('password')}
         value={values.password}
         style={styles.input}
-        placeholder='password'
+        placeholder={i18n.t('NavForm.password')}
         placeholderTextColor={globalColors.$dark__color__light__back}
         secureTextEntry
       />
@@ -102,7 +112,7 @@ export const Create = () => {
         onPress={handleSubmit}
         accessibilityLabel="register button"
       >
-        <Text style={styles.textButton}>Register</Text>
+        <Text style={styles.textButton}>{i18n.t('NavForm.createSubmit')}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -111,11 +121,9 @@ export const Create = () => {
         onPress={() => navigation.replace('Login')}
         accessibilityLabel="login button"
       >
-        <Text style={styles.textButton}>Login</Text>
+        <Text style={styles.textButton}>{i18n.t('NavForm.loginSubmit')}</Text>
       </TouchableOpacity>
-
         
-      {/* </View> */}
       </KeyboardAvoidingView>
     )}
     </Formik>

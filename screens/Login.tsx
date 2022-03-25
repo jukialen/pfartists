@@ -1,17 +1,27 @@
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
+import * as Localization from 'expo-localization';
+import i18n from 'i18n-js';
+import { pl } from '../languages/pl';
+import { en } from '../languages/en';
+import { ja } from '../languages/jp';
 import { Formik } from 'formik'
 import * as Yup from 'yup';
 import { SchemaValidation } from '../shemasValidation/schemaValidation';
 
-import { globalColors } from '../styles/variables';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase';
 import { FormType, UserDataType } from 'types/global.types';
-import { useNavigation } from '@react-navigation/native';
+
+import { globalColors } from '../styles/variables';
 
 export const Login = () => {
   const [valuesFields, setValuesFields] = useState<string>('');
+
+  i18n.fallbacks = true;
+  i18n.translations = { en, ja , pl };
+  i18n.locale = Localization.locale;
 
   const initialValues = {
     email: '',
@@ -32,15 +42,15 @@ export const Login = () => {
       if (user.emailVerified) {
         console.log('Logged in with:', user.email);
         resetForm(initialValues);
-        setValuesFields("data?.NavForm?.statusLogin");
+        setValuesFields(i18n.t('NavForm.statusLogin'));
       
       } else {
-        setValuesFields('data?.NavForm?.unVerified');
+        setValuesFields(i18n.t('NavForm.unVerified'));
       }
     })
     .catch((e) => {
-      setValuesFields('data?.NavForm?.setErrorMessageLogin');
-      e.code === 'auth/user-not-found' && setValuesFields('data?.NavForm?.notExist')
+      setValuesFields(i18n.t('NavForm?.setErrorMessageLogin'));
+      e.code === 'auth/user-not-found' && setValuesFields(i18n.t('NavForm.notExist'))
     });
   };
 
@@ -53,14 +63,14 @@ return (
   {({ handleChange, handleBlur, handleSubmit, values, setFieldValue, errors, touched }) => (
       <KeyboardAvoidingView style={styles.container}>
           <Text style={styles.title}>
-            Login
+          {i18n.t('NavForm.titleOfLogin')}
           </Text>  
 
         <TextInput
           onChangeText={handleChange('email')}
           onBlur={handleBlur('email')}
           value={values.email}
-          placeholder='email'
+          placeholder={i18n.t('NavForm.email')}
           placeholderTextColor={globalColors.$dark__color__light__back}
           style={styles.input}
         />    
@@ -78,7 +88,7 @@ return (
         onChangeText={handleChange('password')}
         onBlur={handleBlur('password')}
         value={values.password}
-        placeholder='password'
+        placeholder={i18n.t('NavForm.password')}
         placeholderTextColor={globalColors.$dark__color__light__back}
         style={styles.input}
         secureTextEntry
@@ -99,7 +109,7 @@ return (
           onPress={handleSubmit}
           accessibilityLabel="login button"
         >
-          <Text style={styles.textButton}>Login</Text>
+          <Text style={styles.textButton}>{i18n.t('NavForm.loginSubmit')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -108,7 +118,7 @@ return (
         onPress={() => navigation.replace('Create')}
         accessibilityLabel="register button"
         >
-          <Text style={styles.textButton}>Register</Text>
+          <Text style={styles.textButton}>{i18n.t('NavForm.createSubmit')}</Text>
         </TouchableOpacity>
         {!!valuesFields && <Text style={styles.error}>{valuesFields}</Text>}
 

@@ -1,38 +1,46 @@
+import * as Localization from 'expo-localization';
+import i18n from 'i18n-js';
+import { pl } from '../languages/pl';
+import { en } from '../languages/en';
+import { ja } from '../languages/jp';
 import * as Yup from 'yup';
 
 export const SchemaValidation = () => {
-  
+  i18n.fallbacks = true;
+  i18n.translations = { en, ja , pl };
+  i18n.locale = Localization.locale;
+
   const username = Yup.string()
-  .matches(/^[A-Z]/g, 'First letter must be a big.')
-  .matches(/[a-ząćęłńóśźżĄĘŁŃÓŚŹŻぁ-んァ-ヾ一-龯]*/g, 'Name accept only letters. These can be Hiragana, Katakana and kanji characters')
-  .matches(/\D/g, 'Name cannot include numbers.')
-  .min(3, 'Name is too short.')
-  .required('Required');
+  .matches(/^[A-Z]/g, i18n.t('NavForm.validateUsernameFl'))
+  .matches(/[a-ząćęłńóśźżĄĘŁŃÓŚŹŻぁ-んァ-ヾ一-龯]*/g, i18n.t('NavForm.validateUsernameHKik'))
+  .matches(/\D/g, i18n.t('NavForm.validateUsernameNum'))
+  .min(3, i18n.t('NavForm.validateUsernameMin'))
+  .required(i18n.t('NavForm.validateRequired'));
   
   const pseudonym = Yup.string()
-  .matches(/[0-9０-９]+/g, 'Name cannot include numbers.')
-  .matches(/[#?!@$%^&*-＃？！＄％＆＊ー]+/g, 'Pseudonym must include at least 1 special character: #?!@$%^&*-＃？！＄％＆＊ー')
-  .matches(/[a-ząćęłńóśźżĄĘŁŃÓŚŹŻぁ-んァ-ヾ一-龯]*/g, 'Pseudonym accept only letters. These can be Hiragana, Katakana and kanji characters')
-  .min(5, 'Pseudonym is too short.')
-  .max(15, 'Pseudonym is too long. Must have a maximum 15 letters.')
-  .required('Required');
+  .matches(/[0-9０-９]+/g, i18n.t('NavForm.validateUsernameNum'))
+  .matches(/[#?!@$%^&*-＃？！＄％＆＊ー]+/g, i18n.t('NavForm. validatePseudonymSpec'))
+  .matches(/[a-ząćęłńóśźżĄĘŁŃÓŚŹŻぁ-んァ-ヾ一-龯]*/g, i18n.t('NavForm.validatePseudonymHKik'))
+  .min(5, i18n.t('NavForm.validatePseudonymMin'))
+  .max(15, i18n.t('NavForm.validatePseudonymMax'))
+  .required(i18n.t('NavForm.validateRequired'));
   
   const email = Yup.string()
-  .email('Invalid email')
-  .required('Required');
+  .email(i18n.t('NavForm.validateEmail'))
+  .required(i18n.t('NavForm.validateRequired'));
   
   const password = Yup.string()
-  .min(9, 'Password is too short. Must have a minimum 9 letters.')
-  .matches(/[A-Z]+/g, 'Password must have at least 1 bid letter.')
-  .matches(/[a-ząćęłńóśźżĄĘŁŃÓŚŹŻぁ-んァ-ヾ一-龯]*/g, 'Password accept only letters. These can be Hiragana, Katakana and kanji characters.')
-  .matches(/[0-9]+/g, 'Password must have at least 1 number.')
-  .matches(/[#?!@$%^&*-]+/g, 'Password must include at least 1 special character: #?!@$%^&*-')
-  .required('Required');
+  .min(9, i18n.t('NavForm.validatePasswordNum'))
+  .matches(/[A-Z]+/g, i18n.t('NavForm.validatePasswordOl'))
+  .matches(/[a-ząćęłńóśźżĄĘŁŃÓŚŹŻぁ-んァ-ヾ一-龯]*/g, i18n.t('NavForm.validatePasswordHKik'))
+  .matches(/[0-9]+/g, i18n.t('NavForm.validatePasswordOn'))
+  .matches(/[#?!@$%^&*-]+/g, i18n.t('NavForm.validatePasswordSpec'))
+  .required(i18n.t('NavForm.validateRequired'));
   
   const description = Yup.string()
-    .required('Required');
+    .required(i18n.t('NavForm.validateRequired'));
   
-  const tags = Yup.string().required('Required');
+  const tags = Yup.string().required(i18n.t('NavForm.validateRequired'));
   
   return {
     username,
