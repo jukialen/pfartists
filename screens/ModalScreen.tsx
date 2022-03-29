@@ -7,18 +7,12 @@ import { Text, View } from '../components/Themed';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
 import { globalColors } from '../styles/variables';
-import { useNavigation } from '@react-navigation/native';
 
 export default function ModalScreen() {
 
   const sign__out = async () => {
-    const navigation = useNavigation();
-
     try {
-      // showUser();
       await signOut(auth);
-      console.log('Logged out!')
-      navigation.navigate('Login');
     } catch (e) {
       console.log(e);
     }
