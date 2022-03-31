@@ -15,6 +15,7 @@ import { SchemaValidation } from '../shemasValidation/schemaValidation';
 import { FormType, UserDataType } from 'types/global.types';
 
 import { globalColors } from '../styles/variables';
+import { Providers } from '../components/molecules/Providers';
 
 export const Login = () => {
   const [valuesFields, setValuesFields] = useState<string>('');
@@ -49,7 +50,7 @@ export const Login = () => {
       }
     })
     .catch((e) => {
-      setValuesFields(i18n.t('NavForm?.setErrorMessageLogin'));
+      setValuesFields(i18n.t('NavForm.setErrorMessageLogin'));
       e.code === 'auth/user-not-found' && setValuesFields(i18n.t('NavForm.notExist'))
     });
   };
@@ -122,6 +123,8 @@ return (
         </TouchableOpacity>
         {!!valuesFields && <Text style={styles.error}>{valuesFields}</Text>}
 
+
+        <Providers />
       </KeyboardAvoidingView>
     )}
     </Formik>
@@ -179,4 +182,5 @@ const styles = StyleSheet.create({
     padding: 0,
     color: globalColors.$primary__color
   },
+
 })

@@ -10,7 +10,7 @@ import i18n from 'i18n-js';
 import { pl } from '../languages/pl';
 import { en } from '../languages/en';
 import { ja } from '../languages/jp';
-import { Field, Form, Formik, ErrorMessage } from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { SchemaValidation } from '../shemasValidation/schemaValidation';
 
@@ -22,7 +22,7 @@ import { globalColors } from '../styles/variables';
 
 // import { FormError } from '../../../../../components/molecules/FormError/FormError';
 import { Alerts } from '../components/Atoms/Alerts/Alerts';
-// import { Progress } from '@chakra-ui/react';
+import { Box, Center, Progress } from 'native-base';
 
 type FileDataType = {
   tags: string
@@ -39,11 +39,11 @@ export const AddFiles = () => {
   const [tag, setTags] = useState<string>('');
 
   i18n.fallbacks = true;
-  i18n.translations = { en, ja , pl };
+  i18n.translations = { en, ja, pl };
   i18n.locale = Localization.locale;
 
   const user = auth.currentUser;
-  
+
   const tagsArray = [
     { tag: i18n.t('chooseTag'), value: '' },
     { tag: i18n.t('Aside.realistic'), value: 'Realistic' },
@@ -55,7 +55,7 @@ export const AddFiles = () => {
     { tag: i18n.t('Aside.animations'), value: 'Animations' },
     { tag: i18n.t('Aside.others'), value: 'Others' }
   ];
-  
+
   const schemaFile = Yup.object({
     tags: SchemaValidation().tags,
   });
@@ -63,17 +63,17 @@ export const AddFiles = () => {
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     const result = await ImagePicker.launchImageLibraryAsync()
- 
+
     if (!result.cancelled) {
       setFile(result);
     }
   };
-  
+
   const uploadFiles = async ({ tags }: FileDataType, { resetForm }: FormType) => {
-          // @ts-ignore
+    // @ts-ignore
     const { uri } = file;
-      const split = uri.split('/')
-      const fileName = split[split.length - 1]
+    const split = uri.split('/')
+    const fileName = split[split.length - 1]
 
     // @ts-ignore
     const photosRef = ref(storage, `${user?.uid}/photos/${fileName}`);
@@ -82,7 +82,7 @@ export const AddFiles = () => {
     // @ts-ignore
     const animationsRef = ref(storage, `${user?.uid}/animations/${fileName}`);
 
-      
+
     let upload: UploadTask;
 
     switch (tags) {
@@ -95,25 +95,25 @@ export const AddFiles = () => {
       default:
         upload = uploadBytesResumable(photosRef, uri);
     }
-  
+
     let refName: string;
 
     upload.on('state_changed', (snapshot: UploadTaskSnapshot) => {
-        const progress: number = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setProgressUpload(progress);
-      
-        switch (snapshot.state) {
-          case 'running':
-            setValuesFields('Upload is running');
-            return refName = snapshot.ref.name;
-          case 'paused':
-            setValuesFields('Upload is paused');
-            break;
-        }
-      }, (e: Error) => {
-        console.error(e);
-        setValuesFields(i18n.t('AnotherForm.notUploadFile'));
-      },
+      const progress: number = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      setProgressUpload(progress);
+
+      switch (snapshot.state) {
+        case 'running':
+          setValuesFields('Upload is running');
+          return refName = snapshot.ref.name;
+        case 'paused':
+          setValuesFields('Upload is paused');
+          break;
+      }
+    }, (e: Error) => {
+      console.error(e);
+      setValuesFields(i18n.t('AnotherForm.notUploadFile'));
+    },
       async () => {
         const sendToFirestore = (colRef: CollectionReference, url: string) => {
           addDoc(colRef, {
@@ -127,7 +127,7 @@ export const AddFiles = () => {
           setFile(null);
           resetForm(initialValues);
         };
-        
+
         switch (tags) {
           case i18n.t('Aside.animations'):
             const animationURL = await getDownloadURL(animationsRef);
@@ -151,72 +151,66 @@ export const AddFiles = () => {
       validationSchema={schemaFile}
       onSubmit={uploadFiles}
     >
-    {({ handleChange, handleBlur, handleSubmit, values, setFieldValue, errors }) => (
-       <View style={styles.container}>
-         <Text style={styles.title}>
-          {i18n.t('AnotherForm.fileTitle')}
+      {({ handleChange, handleBlur, handleSubmit, values, setFieldValue, errors }) => (
+        <View style={styles.container}>
+          <Text style={styles.title}>
+            {i18n.t('AnotherForm.fileTitle')}
           </Text>
-      
-         <Picker
+
+          <Picker
             style={styles.picker}
-            enabled={true} 
+            enabled={true}
             mode="dropdown"
             selectedValue={tag}
             onValueChange={(itemValue, itemIndex) => {
               setTags(itemValue)
-              setFieldValue('tags', itemValue)       
+              setFieldValue('tags', itemValue)
             }}>
-              {tagsArray.map((tags) => 
-              <Picker.Item 
-                label={tags.tag} 
-                value={tags.value} 
+            {tagsArray.map((tags) =>
+              <Picker.Item
+                label={tags.tag}
+                value={tags.value}
                 key={tags.tag}
               />)
-              }
+            }
           </Picker>
 
-          { errors.tags && <Text style={styles.error}>{errors.tags}</Text> }
-      
-           <TouchableOpacity
+          {errors.tags && <Text style={styles.error}>{errors.tags}</Text>}
+
+          <TouchableOpacity
             style={styles.buttonFile}
             // @ts-ignore
             onPress={pickImage}
             accessibilityLabel="button submit a file to storage"
           >
-           <Text style={[styles.textButton, styles.textFile]}>
-             {i18n.t('AnotherForm.fileInput')}
-             </Text>
-         </TouchableOpacity>
+            <Text style={[styles.textButton, styles.textFile]}>
+              {i18n.t('AnotherForm.fileInput')}
+            </Text>
+          </TouchableOpacity>
 
-         <TouchableOpacity
-          style={styles.button}
-          // @ts-ignore
-          onPress={handleSubmit}
-          accessibilityLabel="button submit a file to storage"
-         >
-          <Text style={styles.textButton}>
-            {i18n.t('AnotherForm.send')}
-          </Text>
-         </TouchableOpacity>
-        {/* { 
-          progressUpload >= 1 && !(valuesFields === i18n.t('AnotherForm.uploadFile')) &&
-          <Progress
-            value={progressUpload}
-            colorScheme='green'
-            isAnimated
-            hasStripe
-            min={0}
-            max={100}
-            w={280}
-            bg='blue.400'
-            m='1.5rem auto'
-            size='md'
-          />
-        } */}
-  
-        { valuesFields !== '' && <Alerts valueFields={valuesFields} /> }
-       </View>
-     )}
+          <TouchableOpacity
+            style={styles.button}
+            // @ts-ignore
+            onPress={handleSubmit}
+            accessibilityLabel="button submit a file to storage"
+          >
+            <Text style={styles.textButton}>
+              {i18n.t('AnotherForm.send')}
+            </Text>
+          </TouchableOpacity>
+          
+          {
+             progressUpload >= 1 && !(valuesFields === i18n.t('AnotherForm.uploadFile')) &&
+            <Center w="100%" m={10}>
+              <Box w="90%" maxW="350">
+                <Progress size='md' colorScheme='green' bg='blue.400' value={100} mx="4" />
+              </Box>
+            </Center>
+          }
+
+          {valuesFields !== '' && <Alerts valueFields={valuesFields} />}
+        </View>
+      )}
     </Formik>
   );
 };
@@ -237,7 +231,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   picker: {
-    width: 250,
+    width: 300,
     maxHeight: 100,
     marginVertical: 15,
     marginTop: 30,
@@ -269,7 +263,7 @@ const styles = StyleSheet.create({
     paddingVertical: 25
   },
   buttonFile: {
-    width: 250,
+    width: 300,
     height: 45,
     margin: 20,
     padding: 5,

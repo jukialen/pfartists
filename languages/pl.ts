@@ -148,7 +148,7 @@ export const pl = {
     description: "Opis",
     fileTitle: "Dodaj plik",
     tags: "Tagi",
-    file: "Plik",
+    fileInput: "Wybierz plik",
     arialSendingFile: "wysyłanie pliku",
     send: "Wyślij",
     uploadFile: "Plik został wysłany.",

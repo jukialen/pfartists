@@ -148,7 +148,7 @@ export const ja = {
     description: "叙述",
     fileTitle: "Adding a file",
     tags: "タグ",
-    file: "ファイル",
+    fileInput: "ファイルが選ぶ",
     arialSendingFile: "sending file",
     send: "送る",
     uploadFile: "File has been uploaded.",

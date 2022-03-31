@@ -148,7 +148,7 @@ export const en = {
     description: "Description",
     fileTitle: "Adding a file",
     tags: "Tags",
-    file: "File",
+    fileInput: "Choose a file",
     arialSendingFile: "sending file",
     send: "Send",
     uploadFile: "File has been uploaded.",

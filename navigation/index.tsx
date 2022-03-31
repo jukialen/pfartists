@@ -5,12 +5,10 @@
  */
 import { FontAwesome } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer, DefaultTheme, DarkTheme, useNavigation } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 import { ColorSchemeName, Pressable } from 'react-native';
-// import { useNavigation } from '@react-navigation/core'
-// 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import ModalScreen from '../screens/ModalScreen';
@@ -44,17 +42,18 @@ export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeNa
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootNavigator() {
-  const [user, setUser] = useState<User | null>(null);
-  const navigation = useNavigation();
+  const [user, setUser] = useState<boolean>(false);
 
   useEffect(() => {
-    onAuthStateChanged(auth, (user) => !!user && setUser(user))
+    const unsub = onAuthStateChanged(auth, (user) => 
+      user ? setUser(true) : setUser(false))
+    return unsub
   }, []);
 
   return (
     <Stack.Navigator>
       {
-        !!user ? (
+        user ? (
         <>
           <Stack.Screen name="Root" component={BottomTabNavigator} options={{ headerShown: false }} />
           <Stack.Screen name="NotFound" component={NotFoundScreen} options={{ title: 'Oops!' }} />
@@ -68,10 +67,8 @@ function RootNavigator() {
             <Stack.Screen name="Login" component={Login} options={{ headerShown: false, animation: 'fade_from_bottom' }} />
           <Stack.Screen name="Create" component={Create} options={{ headerShown: false, animation: 'fade_from_bottom' }} />
           </>
-          
         )
       }
-      
     </Stack.Navigator>
   )
 }
