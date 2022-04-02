@@ -152,7 +152,9 @@ export const ja = {
     arialSendingFile: "sending file",
     send: "送る",
     uploadFile: "File has been uploaded.",
-    notUploadFile: "File hasn't been uploaded."
+    notUploadFile: "File hasn't been uploaded.",
+    tooBigFile: "ファイルがだぶつきます。グラフィックのファイルが５MBより小さいだ have to be smaller than 5MB, and videos smaller than 16MB",
+    tooLongTime: "Too long upload time. Try again."
   },
   ZeroFiles: {
     drawings: "描画が見つけあせん。",

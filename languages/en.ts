@@ -152,7 +152,9 @@ export const en = {
     arialSendingFile: "sending file",
     send: "Send",
     uploadFile: "File has been uploaded.",
-    notUploadFile: "File hasn't been uploaded."
+    notUploadFile: "File hasn't been uploaded.",
+    tooBigFile: "Too large file. Graphic files have to be smaller than 5MB, and videos smaller than 16MB",
+    tooLongTime: "Too long upload time. Try again."
   },
   ZeroFiles: {
     drawings: "No your drawings.",

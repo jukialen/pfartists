@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { LogBox, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
 import { auth, storage } from '../firebase';
@@ -33,7 +33,7 @@ const initialValues = {
 };
 
 export const AddFiles = () => {
-  const [file, setFile] = useState<Blob | Uint8Array | ArrayBuffer | ImagePicker.ImageInfo | null>(null);
+  const [file, setFile] = useState<string | null>(null);
   const [valuesFields, setValuesFields] = useState<string>('');
   const [progressUpload, setProgressUpload] = useState<number>(0);
   const [tag, setTags] = useState<string>('');
@@ -60,20 +60,40 @@ export const AddFiles = () => {
     tags: SchemaValidation().tags,
   });
 
+  LogBox.ignoreLogs([`Setting a timer for a long period`]);
+
+  useEffect(()=>{
+    async () => {
+      if (Platform.OS !== "web") {
+        const {
+          status,
+        } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          alert("Sorry, we need camera roll permissions to make this work!");
+        }
+      }
+    }
+  },[])
+
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    const result = await ImagePicker.launchImageLibraryAsync()
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: false,
+      quality: 1,
+      exif: true
+    })
 
     if (!result.cancelled) {
-      setFile(result);
+      // @ts-ignore
+      setFile(result.uri);
     }
   };
 
   const uploadFiles = async ({ tags }: FileDataType, { resetForm }: FormType) => {
-    // @ts-ignore
-    const { uri } = file;
-    const split = uri.split('/')
-    const fileName = split[split.length - 1]
+    let blob: Blob | Uint8Array | ArrayBuffer;
+    const split = file!.split('/');
+    const fileName = split[split.length - 1];
 
     // @ts-ignore
     const photosRef = ref(storage, `${user?.uid}/photos/${fileName}`);
@@ -82,18 +102,33 @@ export const AddFiles = () => {
     // @ts-ignore
     const animationsRef = ref(storage, `${user?.uid}/animations/${fileName}`);
 
+     blob = await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.onload = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function (e) {
+        console.log(e);
+        reject(new TypeError("Network request failed"));
+      };
+      xhr.responseType = "blob";
+      xhr.open("GET", file!, true);
+      xhr.send(null);
+    });
 
     let upload: UploadTask;
 
+    alert(file);
+
     switch (tags) {
       case `Animations`:
-        upload = uploadBytesResumable(animationsRef, uri);
+        upload = uploadBytesResumable(animationsRef, blob!);
         break;
       case `Videos`:
-        upload = uploadBytesResumable(videosRef, uri);
+        upload = uploadBytesResumable(videosRef, blob!);
         break;
       default:
-        upload = uploadBytesResumable(photosRef, uri);
+        upload = uploadBytesResumable(photosRef, blob!);
     }
 
     let refName: string;
@@ -110,9 +145,12 @@ export const AddFiles = () => {
           setValuesFields('Upload is paused');
           break;
       }
-    }, (e: Error) => {
-      console.error(e);
+    }, (e) => {
+      alert(e);
       setValuesFields(i18n.t('AnotherForm.notUploadFile'));
+      e.code === 'storage/server-file-wrong-size' && setValuesFields('AnotherForm.tooBigFile');
+      e.code === 'storage/retry-limit-exceeded' && setValuesFields('AnotherForm.tooLongTime')
+      console.log(e.code)
     },
       async () => {
         const sendToFirestore = (colRef: CollectionReference, url: string) => {
@@ -144,14 +182,13 @@ export const AddFiles = () => {
       });
   };
 
-  console.log(tag)
   return (
     <Formik
       initialValues={initialValues}
       validationSchema={schemaFile}
       onSubmit={uploadFiles}
     >
-      {({ handleChange, handleBlur, handleSubmit, values, setFieldValue, errors }) => (
+      {({ handleSubmit, setFieldValue, errors }) => (
         <View style={styles.container}>
           <Text style={styles.title}>
             {i18n.t('AnotherForm.fileTitle')}
@@ -179,7 +216,6 @@ export const AddFiles = () => {
 
           <TouchableOpacity
             style={styles.buttonFile}
-            // @ts-ignore
             onPress={pickImage}
             accessibilityLabel="button submit a file to storage"
           >
@@ -203,7 +239,7 @@ export const AddFiles = () => {
              progressUpload >= 1 && !(valuesFields === i18n.t('AnotherForm.uploadFile')) &&
             <Center w="100%" m={10}>
               <Box w="90%" maxW="350">
-                <Progress size='md' colorScheme='green' bg='blue.400' value={100} mx="4" />
+                <Progress size='md' colorScheme='green' bg='blue.400' value={progressUpload} mx="4" />
               </Box>
             </Center>
           }

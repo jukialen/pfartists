@@ -20,7 +20,7 @@ export const pl = {
     validateUsernameMin: "Imię jest za krótkie.",
     validatePseudonymNum: "Pseudonym musi mieć conajmniej 1 cyfrę.",
     validatePseudonymSpec: "Pseudonym musi zawierać conajmniej 1 znak specjalny: #?!@$%^&*-＃？！＄％＆＊ー",
-    validatePseudonymHKik:"Pseudonym przyjmuje tylko litery. Mogą to być znaki Hiragany, Katakany i kanji",
+    validatePseudonymHKik: "Pseudonym przyjmuje tylko litery. Mogą to być znaki Hiragany, Katakany i kanji",
     validatePseudonymMin: "Pseudonym jest za krótkie.",
     validatePseudonymMax: "Pseudonym jest za długi. Maksymalnie musi mieć 15 znaków.",
     validateEmail: "Niepoprawny adres e-mail.",
@@ -152,7 +152,9 @@ export const pl = {
     arialSendingFile: "wysyłanie pliku",
     send: "Wyślij",
     uploadFile: "Plik został wysłany.",
-    notUploadFile: "Plik nie został wysłany."
+    notUploadFile: "Plik nie został wysłany.",
+    tooBigFile: "Za duży plik. Pliki graficzne muszą być mniejsze niż 5MB, a filmy mniejsze niż 16MB",
+    tooLongTime: "Za długi czas przesyłania. Spróbuj ponownie."
   },
   ZeroFiles: {
     drawings: "Brak rysunków.",
@@ -173,15 +175,15 @@ export const pl = {
     buttonAria: "przycisk do aktualizacji hasła",
     success: "Hasło zostało zaktualizowane"
   },
-  "DeletionFile": {
-    "loadingText": "Usuwanie",
-    "deletionButton": "Usuń",
-    "title": "Usunięcie pliku",
-    "question": "Jesteś pewien? Po wykonaniu tej czynności nie można jej cofnąć.",
-    "cancelButton": "Cofnij",
-    "deleteButton": "Usuń",
-    "deleting": "Usuwanie pliku.",
-    "deleted": "Usunięto plik"
+  DeletionFile: {
+    loadingText: "Usuwanie",
+    deletionButton: "Usuń",
+    title: "Usunięcie pliku",
+    question: "Jesteś pewien? Po wykonaniu tej czynności nie można jej cofnąć.",
+    cancelButton: "Cofnij",
+    deleteButton: "Usuń",
+    deleting: "Usuwanie pliku.",
+    deleted: "Usunięto plik"
   },
   error: "Spróbuj ponownie lub sprawdź połączenie z internetem",
   edit: "Edytuj",

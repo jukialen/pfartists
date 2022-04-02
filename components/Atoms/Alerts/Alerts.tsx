@@ -39,6 +39,8 @@ export const Alerts = ({ valueFields }: AlertsType) => {
       case 'Upload is paused':
         return status = 'warning';
       case 'Nie usunięto pliku.':
+      case i18n.t('AnotherForm.tooLongTime'):
+      case i18n.t('AnotherForm.tooBigFile'):
       case i18n.t('NavForm.notExist'):
       case i18n.t('NavForm.setErrorMessageLogin'):
       case i18n.t('NavForm.theSameEmail'):
@@ -68,6 +70,8 @@ export const Alerts = ({ valueFields }: AlertsType) => {
       case 'Upload is paused':
         return color = 'yellow';
       case 'Nie usunięto pliku.':
+      case i18n.t('AnotherForm.tooLongTime'):
+      case i18n.t('AnotherForm.tooBigFile'):
       case i18n.t('NavForm.notExist'):
       case i18n.t('NavForm.setErrorMessageLogin'):
       case i18n.t('NavForm.theSameEmail'):
